@@ -1,4 +1,4 @@
-# Basic Chatbot with LangChain and LangGraph
+# 1. Basic Chatbot with LangChain and LangGraph
 
 This project demonstrates the creation of a **basic chatbot** using the powerful **LangChain** and **LangGraph** libraries. It is designed with memory-saving capabilities and incorporates **Google's Gemini Model 2.5-Flash** as the language model.
 
@@ -106,7 +106,7 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 
 
-# X Post Generator Bot
+# 2. X Post Generator Bot
 
 The **X Post Generator Bot** is an automated solution built using [LangChain](https://github.com/hwchase17/langchain) and [LangGraph](https://langgraph.readthedocs.io/en/latest/). This bot generates, evaluates, and optimizes short, humorous posts (tweets) for X (formerly Twitter) using the **Gemini model** `2.5-flash` as the language model.
 
