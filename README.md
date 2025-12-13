@@ -103,3 +103,77 @@ To start the chatbot, execute the notebook code. You can interact with it in rea
 ## License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
+
+
+# X Post Generator Bot
+
+The **X Post Generator Bot** is an automated solution built using [LangChain](https://github.com/hwchase17/langchain) and [LangGraph](https://langgraph.readthedocs.io/en/latest/). This bot generates, evaluates, and optimizes short, humorous posts (tweets) for X (formerly Twitter) using the **Gemini model** `2.5-flash` as the language model.
+
+## Table of Contents
+
+- [About](#about)
+- [Features](#features)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Workflow Pipeline](#workflow-pipeline)
+- [License](#license)
+
+---
+
+## About
+
+The X Post Generator Bot simplifies the process of creating viral and witty content for social media. From idea generation to critical evaluation, this tool ensures every post meets stringent virality criteria. Using feedback loops, it refines posts to maximize their humor, originality, and audience appeal.
+
+---
+
+## Features
+
+- **Automatic Tweet Generation**
+  - Creates short, humorous tweets based on a given topic.
+
+- **Evaluation Engine**
+  - Uses structured output to evaluate tweets against criteria like originality, humor, virality, punchiness, and adherence to format.
+
+- **Optimization**
+  - Improves tweets based on direct feedback to enhance their humor and engagement potential.
+
+- **Feedback History Tracking**
+  - Maintains a history of tweets and feedback to provide a transparent optimization process.
+
+---
+
+## Installation
+
+1. Clone the repository:
+    ```bash
+    git clone https://github.com/chaudhary-pawan/LangGraph.git
+    ```
+
+2. Navigate to the project directory:
+    ```bash
+    cd LangGraph
+    ```
+
+3. Install dependencies:
+    ```bash
+    pip install -r requirements.txt
+    ```
+
+4. Install additional libraries:
+    ```bash
+    pip install langchain_google_genai
+    ```
+
+---
+
+## Usage
+
+1. Open the provided Jupyter Notebook `8_X_post_generator.ipynb`.
+2. Define the initial state by specifying the topic of the post:
+   ```python
+   initial_state = {
+       "topic": "Relation betweeen Russia and Indian governments",
+       "iteration": 1,
+       "max_iteration": 5
+   }
