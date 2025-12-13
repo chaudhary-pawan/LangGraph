@@ -100,10 +100,6 @@ To start the chatbot, execute the notebook code. You can interact with it in rea
 
 ---
 
-## License
-
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
-
 
 
 # 2. X Post Generator Bot
