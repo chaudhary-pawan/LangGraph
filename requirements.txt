@@ -1,0 +1,6 @@
+langchain
+memory-saver
+langgraph
+openai
+langchain-google
+langchain-google-genai
