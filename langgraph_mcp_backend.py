@@ -38,7 +38,7 @@ def submit_async_task(coro):
 # -------------------
 # 1. LLM
 # -------------------
-llm = ChatOpenAI()
+llm = ChatGoogleGenerativeAI()
 
 # -------------------
 # 2. Tools
