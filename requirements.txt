@@ -1,6 +1,8 @@
 langchain
-memory-saver
 langgraph
+langgraph-checkpoint
+langgraph-checkpoint-sqlite
 openai
-langchain-google
 langchain-google-genai
+langchain-community
+streamlit
