@@ -7,3 +7,5 @@ langchain-google-genai
 langchain-community
 streamlit
 langchain-mcp-adapters
+duckduckgo-search
+ddgs
