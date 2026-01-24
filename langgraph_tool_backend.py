@@ -1,5 +1,6 @@
 # backend.py
 
+from xml.parsers.expat import model
 from langgraph.graph import StateGraph, START, END
 from typing import TypedDict, Annotated
 from langchain_core.messages import BaseMessage, HumanMessage
@@ -18,13 +19,13 @@ load_dotenv()
 # -------------------
 # 1. LLM
 # -------------------
-llm = ChatGoogleGenerativeAI()
+llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash", temperature=0)
 
 # -------------------
 # 2. Tools
 # -------------------
 # Tools
-search_tool = DuckDuckGoSearchRun(region="us-en")
+search_tool = DuckDuckGoSearchRun()
 
 @tool
 def calculator(first_num: float, second_num: float, operation: str) -> dict:
