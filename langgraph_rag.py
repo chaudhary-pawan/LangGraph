@@ -6,7 +6,6 @@ import tempfile
 from typing import Annotated, Any, Dict, Optional, TypedDict
 
 from dotenv import load_dotenv
-from langchain_community.document_loaders import PDFPlumberLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_community.chat_models import ChatOpenAI
 from langchain_community.document_loaders import PyPDFLoader
