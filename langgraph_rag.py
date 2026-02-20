@@ -26,7 +26,7 @@ load_dotenv()
 # 1. LLM + embeddings
 # -------------------
 llm = ChatGoogleGenerativeAI(model="gemini-1.5-flash")
-embeddings = OpenAIEmbeddings(model="text-embedding-3-small")
+embeddings = GoogleGenerativeAIEmbeddings(model="embedding-001")
 
 # -------------------
 # 2. PDF retriever store (per thread)
