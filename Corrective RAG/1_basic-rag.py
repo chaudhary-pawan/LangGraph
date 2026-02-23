@@ -55,3 +55,11 @@ def generate(state):
     context = "\n\n".join(d.page_content for d in state["docs"])
     out = (prompt | llm).invoke({"question": state["question"], "context": context})
     return {"answer": out.content}
+
+
+g = StateGraph(State)
+g.add_node("retrieve", retrieve)
+g.add_node("generate", generate)
+g.add_edge(START, "retrieve")
+g.add_edge("retrieve", "generate")
+g.add_edge("generate", END)
