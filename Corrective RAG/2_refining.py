@@ -128,11 +128,15 @@ def generate(state: State) -> State:
 
 g = StateGraph(State)
 g.add_node("retrieve", retrieve)
+g.add_node("refine", refine)
 g.add_node("generate", generate)
+
 g.add_edge(START, "retrieve")
-g.add_edge("retrieve", "generate")
+g.add_edge("retrieve", "refine")
+g.add_edge("refine", "generate")
 g.add_edge("generate", END)
-app=g.compile()
+
+app = g.compile()
 
 # 5) Run
 res = app.invoke({"question": "WHat is a transformer in deep learning.", "docs": [], "answer": ""})
