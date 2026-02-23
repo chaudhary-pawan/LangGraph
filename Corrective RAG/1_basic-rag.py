@@ -25,3 +25,8 @@ chunks = RecursiveCharacterTextSplitter(chunk_size=900, chunk_overlap=150).split
 # 3) Clean text to avoid UnicodeEncodeError (surrogates from PDF extraction)
 for d in chunks:
     d.page_content = d.page_content.encode("utf-8", "ignore").decode("utf-8", "ignore")
+    
+    
+# 3) Index (fresh collection each run)
+embeddings = GoogleGenerativeAIEmbeddings(model='text-embedding-004')
+vector_store = FAISS.from_documents(chunks, embeddings)
