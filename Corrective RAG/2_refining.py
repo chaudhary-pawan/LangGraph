@@ -138,14 +138,12 @@ g.add_edge("generate", END)
 
 app = g.compile()
 
-# 5) Run
-res = app.invoke({"question": "WHat is a transformer in deep learning.", "docs": [], "answer": ""})
+res = app.invoke({
+    "question": "Explain the bias–variance tradeoff",
+    "docs": [],
+    "strips": [],
+    "kept_strips": [],
+    "refined_context": "",
+    "answer": ""
+})
 print(res["answer"])
-
-print(res['docs'][0].page_content)
-print('*'*100)
-print(res['docs'][1].page_content)
-print('*'*100)
-print(res['docs'][2].page_content)
-print('*'*100)
-print(res['docs'][3].page_content)
