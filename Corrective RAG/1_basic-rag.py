@@ -32,3 +32,6 @@ embeddings = GoogleGenerativeAIEmbeddings(model='text-embedding-004')
 vector_store = FAISS.from_documents(chunks, embeddings)
 
 retriever = vector_store.as_retriever(search_type='similarity', search_kwargs={'k':4})
+
+# 4) LLM + prompt
+llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash", temperature=0)
