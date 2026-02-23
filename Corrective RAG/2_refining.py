@@ -1,0 +1,143 @@
+from typing import List, TypedDict
+import re
+
+from langchain_community.document_loaders import PyPDFLoader
+from langchain_community.vectorstores import FAISS
+from langchain_google_genai import GoogleGenerativeAIEmbeddings, ChatGoogleGenerativeAI
+from langchain_text_splitters import RecursiveCharacterTextSplitter
+from langchain_core.documents import Document
+from langchain_core.prompts import ChatPromptTemplate
+from langgraph.graph import StateGraph, START, END
+from pydantic import BaseModel
+from dotenv import load_dotenv
+
+load_dotenv()
+
+load_dotenv()
+
+docs = (
+    PyPDFLoader("./documents/book1.pdf").load() +
+    PyPDFLoader("./documents/book2.pdf").load() +
+    PyPDFLoader("./documents/book3.pdf").load()
+)
+
+# 2) Chunk
+chunks = RecursiveCharacterTextSplitter(chunk_size=900, chunk_overlap=150).split_documents(docs)
+
+# 3) Clean text to avoid UnicodeEncodeError (surrogates from PDF extraction)
+for d in chunks:
+    d.page_content = d.page_content.encode("utf-8", "ignore").decode("utf-8", "ignore")
+    
+    
+# 3) Index (fresh collection each run)
+embeddings = GoogleGenerativeAIEmbeddings(model='text-embedding-004')
+vector_store = FAISS.from_documents(chunks, embeddings)
+
+retriever = vector_store.as_retriever(search_type='similarity', search_kwargs={'k':4})
+
+# 4) LLM + prompt
+llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash", temperature=0)
+
+class State(TypedDict):
+    question: str
+    docs: List[Document]
+    strips: List[str]            # output of decomposition (sentence strips)
+    kept_strips: List[str]       # after filtering (kept sentences)
+    refined_context: str         # recomposed internal knowledge (joined kept_strips)
+    answer: str
+    
+def retrieve(state):
+    q = state["question"]
+    return {"docs": retriever.invoke(q)}
+
+
+# -----------------------------
+# Sentence-level DECOMPOSER
+# -----------------------------
+def decompose_to_sentences(text: str) -> List[str]:
+    text = re.sub(r"\s+", " ", text).strip()
+    sentences = re.split(r"(?<=[.!?])\s+", text)
+    return [s.strip() for s in sentences if len(s.strip()) > 20]
+
+
+# -----------------------------
+# FILTER (LLM judge)
+# -----------------------------
+class KeepOrDrop(BaseModel):
+    keep: bool
+
+filter_prompt = ChatPromptTemplate.from_messages(
+    [
+        (
+            "system",
+            "You are a strict relevance filter.\n"
+            "Return keep=true only if the sentence directly helps answer the question.\n"
+            "Use ONLY the sentence. Output JSON only.",
+        ),
+        ("human", "Question: {question}\n\nSentence:\n{sentence}"),
+    ]
+)
+
+filter_chain = filter_prompt | llm.with_structured_output(KeepOrDrop)
+
+
+# -----------------------------
+# REFINING (Decompose -> Filter -> Recompose)
+# -----------------------------
+def refine(state: State) -> State:
+
+    q = state["question"]
+
+    # Combine retrieved docs into one context string
+    context = "\n\n".join(d.page_content for d in state["docs"]).strip()
+
+    # 1) DECOMPOSITION: context -> sentence strips
+    strips = decompose_to_sentences(context)
+
+    # 2) FILTER: keep only relevant strips
+    kept: List[str] = []
+    
+    for s in strips:
+        if filter_chain.invoke({"question": q, "sentence": s}).keep:
+            kept.append(s)
+
+    # 3) RECOMPOSE: glue kept strips back together (internal knowledge)
+    refined_context = "\n".join(kept).strip()
+
+    return {
+        "strips": strips,
+        "kept_strips": kept,
+        "refined_context": refined_context,
+    }
+
+prompt = ChatPromptTemplate.from_messages(
+    [
+        ("system", "Answer only from the context. If not in context, say you don't know."),
+        ("human", "Question: {question}\n\nContext:\n{context}"),
+    ]
+)
+def generate(state):
+    context = "\n\n".join(d.page_content for d in state["docs"])
+    out = (prompt | llm).invoke({"question": state["question"], "context": context})
+    return {"answer": out.content}
+
+
+g = StateGraph(State)
+g.add_node("retrieve", retrieve)
+g.add_node("generate", generate)
+g.add_edge(START, "retrieve")
+g.add_edge("retrieve", "generate")
+g.add_edge("generate", END)
+app=g.compile()
+
+# 5) Run
+res = app.invoke({"question": "WHat is a transformer in deep learning.", "docs": [], "answer": ""})
+print(res["answer"])
+
+print(res['docs'][0].page_content)
+print('*'*100)
+print(res['docs'][1].page_content)
+print('*'*100)
+print(res['docs'][2].page_content)
+print('*'*100)
+print(res['docs'][3].page_content)
