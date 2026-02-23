@@ -68,3 +68,11 @@ app=g.compile()
 # 5) Run
 res = app.invoke({"question": "WHat is a transformer in deep learning.", "docs": [], "answer": ""})
 print(res["answer"])
+
+print(res['docs'][0].page_content)
+print('*'*100)
+print(res['docs'][1].page_content)
+print('*'*100)
+print(res['docs'][2].page_content)
+print('*'*100)
+print(res['docs'][3].page_content)
