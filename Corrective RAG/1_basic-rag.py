@@ -63,3 +63,8 @@ g.add_node("generate", generate)
 g.add_edge(START, "retrieve")
 g.add_edge("retrieve", "generate")
 g.add_edge("generate", END)
+app=g.compile()
+
+# 5) Run
+res = app.invoke({"question": "WHat is a transformer in deep learning.", "docs": [], "answer": ""})
+print(res["answer"])
