@@ -18,3 +18,10 @@ docs = (
     PyPDFLoader("./documents/book2.pdf").load() +
     PyPDFLoader("./documents/book3.pdf").load()
 )
+
+# 2) Chunk
+chunks = RecursiveCharacterTextSplitter(chunk_size=900, chunk_overlap=150).split_documents(docs)
+
+# 3) Clean text to avoid UnicodeEncodeError (surrogates from PDF extraction)
+for d in chunks:
+    d.page_content = d.page_content.encode("utf-8", "ignore").decode("utf-8", "ignore")
