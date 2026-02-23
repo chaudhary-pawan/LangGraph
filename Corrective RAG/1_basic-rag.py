@@ -35,3 +35,23 @@ retriever = vector_store.as_retriever(search_type='similarity', search_kwargs={'
 
 # 4) LLM + prompt
 llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash", temperature=0)
+
+class State(TypedDict):
+    question: str
+    docs: List[Document]
+    answer: str
+    
+def retrieve(state):
+    q = state["question"]
+    return {"docs": retriever.invoke(q)}
+
+prompt = ChatPromptTemplate.from_messages(
+    [
+        ("system", "Answer only from the context. If not in context, say you don't know."),
+        ("human", "Question: {question}\n\nContext:\n{context}"),
+    ]
+)
+def generate(state):
+    context = "\n\n".join(d.page_content for d in state["docs"])
+    out = (prompt | llm).invoke({"question": state["question"], "context": context})
+    return {"answer": out.content}
