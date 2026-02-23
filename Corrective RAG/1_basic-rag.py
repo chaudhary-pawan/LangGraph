@@ -12,3 +12,9 @@ from langgraph.graph import StateGraph, START, END
 from dotenv import load_dotenv
 
 load_dotenv()
+
+docs = (
+    PyPDFLoader("./documents/book1.pdf").load() +
+    PyPDFLoader("./documents/book2.pdf").load() +
+    PyPDFLoader("./documents/book3.pdf").load()
+)
