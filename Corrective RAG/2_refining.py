@@ -110,15 +110,19 @@ def refine(state: State) -> State:
         "refined_context": refined_context,
     }
 
-prompt = ChatPromptTemplate.from_messages(
+answer_prompt = ChatPromptTemplate.from_messages(
     [
-        ("system", "Answer only from the context. If not in context, say you don't know."),
-        ("human", "Question: {question}\n\nContext:\n{context}"),
+        (
+            "system",
+            "You are a helpful ML tutor. Answer ONLY using the provided refined bullets.\n"
+            "If the bullets are empty or insufficient, say: 'I don't know based on the provided books.'",
+        ),
+        ("human", "Question: {question}\n\nRefined context:\n{refined_context}"),
     ]
 )
-def generate(state):
-    context = "\n\n".join(d.page_content for d in state["docs"])
-    out = (prompt | llm).invoke({"question": state["question"], "context": context})
+
+def generate(state: State) -> State:
+    out = (answer_prompt | llm).invoke({"question": state["question"], "refined_context": state['refined_context']})
     return {"answer": out.content}
 
 
