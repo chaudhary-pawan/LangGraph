@@ -10,3 +10,4 @@ langchain-mcp-adapters
 duckduckgo-search
 ddgs
 langchain-text-splitters
+pypdfloader
